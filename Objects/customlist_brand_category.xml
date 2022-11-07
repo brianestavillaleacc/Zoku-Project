@@ -1,0 +1,79 @@
+<customlist scriptid="customlist_brand_category">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Scale</name>
+  <customvalues>
+    <customvalue scriptid="val_38958_6961610_sb1_673">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>1/3 Scale</value>
+    </customvalue>
+    <customvalue scriptid="val_38959_6961610_sb1_703">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>1/4 Scale</value>
+    </customvalue>
+    <customvalue scriptid="val_38960_6961610_sb1_504">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>1/6 Scale</value>
+    </customvalue>
+    <customvalue scriptid="val_102440_6961610_451">
+      <abbreviation>1</abbreviation>
+      <isinactive>F</isinactive>
+      <value>1/7 Scale</value>
+    </customvalue>
+    <customvalue scriptid="val_102441_6961610_863">
+      <abbreviation>1</abbreviation>
+      <isinactive>F</isinactive>
+      <value>1/10 Scale</value>
+    </customvalue>
+    <customvalue scriptid="val_102442_6961610_720">
+      <abbreviation>S</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Supreme Scale</value>
+    </customvalue>
+    <customvalue scriptid="val_150789_6961610_406">
+      <abbreviation>4</abbreviation>
+      <isinactive>F</isinactive>
+      <value>4 inch</value>
+    </customvalue>
+    <customvalue scriptid="val_150790_6961610_269">
+      <abbreviation>1</abbreviation>
+      <isinactive>F</isinactive>
+      <value>12 inch</value>
+    </customvalue>
+    <customvalue scriptid="val_150791_6961610_520">
+      <abbreviation>2</abbreviation>
+      <isinactive>F</isinactive>
+      <value>24 inch</value>
+    </customvalue>
+    <customvalue scriptid="val_150792_6961610_123">
+      <abbreviation>6</abbreviation>
+      <isinactive>F</isinactive>
+      <value>60 cm</value>
+    </customvalue>
+    <customvalue scriptid="val_151819_6961610_913">
+      <abbreviation>N</abbreviation>
+      <isinactive>F</isinactive>
+      <value>NA</value>
+    </customvalue>
+    <customvalue scriptid="val_472533_6961610_sb1_379">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Accessories</value>
+    </customvalue>
+    <customvalue scriptid="val_472551_6961610_sb1_611">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>TOYS</value>
+    </customvalue>
+    <customvalue scriptid="val_472592_6961610_sb1_234">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Homeware</value>
+    </customvalue>
+  </customvalues>
+</customlist>

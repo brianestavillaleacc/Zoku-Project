@@ -1,0 +1,19 @@
+<customlist scriptid="customlist275">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>XM Exclusive</name>
+  <customvalues>
+    <customvalue scriptid="val_38623_6961610_788">
+      <abbreviation>N</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Yes</value>
+    </customvalue>
+    <customvalue scriptid="val_38624_6961610_779">
+      <abbreviation>Y</abbreviation>
+      <isinactive>F</isinactive>
+      <value>No</value>
+    </customvalue>
+  </customvalues>
+</customlist>

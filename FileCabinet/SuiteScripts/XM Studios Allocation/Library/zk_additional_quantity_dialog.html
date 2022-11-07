@@ -1,0 +1,59 @@
+<table>
+    <tr>
+        <td>
+            <div> <p>Additional Quantity: <input id="custpage_inputdialog" rows="5" cols="40" style="text-align:right" placeholder="Enter the number here..."/></p></div>
+        </td>
+        <td>
+            <div><p>Remaining: <input id="custpage_remainder" rows="5" cols="40" style="text-align:right" value="' + inRemainderQty + '"/></p></div>
+        </td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>
+            <div class="uir-message-buttons" class="custombtn"><button value="true" id="btnSubmitOk">Ok</button></div>
+        </td>
+        <td>
+            <div class="uir-message-buttons" class="custombtn"><button value="false" id="btnSubmitCancel">Cancel</button></div>
+        </td>
+        </tr>
+</table>
+<script type="text/javascript" src="/ui/jquery/jquery-3.5.1.min.js?NS_VER=2022.1&amp;minver=13"></script>
+<script>
+    jQuery(document).ready(function(){
+        var fldRemainder=jQuery("#custpage_remainder");
+        fldRemainder.prop( "disabled", true );
+        jQuery("#custpage_inputdialog").keyup(function(){
+            jQuery(this).val(jQuery(this).val().match(/\\d*\\.?\\d+/));
+            if(parseInt(jQuery(this).val()) > ' + parseInt(inRemainderQty) + ') {
+                alert("Not Enough Available Quantity");jQuery(this).val("'+inRemainderQty+'");
+            } else if (parseInt(jQuery(this).val()) < 1) {
+                alert('Value cannot be lower than 1');jQuery(this).val('');
+            }
+        });
+    });
+ jQuery("#btnSubmitOk").click(function(){
+     alert(1);
+     try {
+        var stAdditionalQuantity = jQuery("#custpage_inputdialog").val();
+        if(stAdditionalQuantity) {
+            window.require(["N/url","N/https"],function (url,https) {
+                 var inType = window.nlapiGetRecordType();
+                 var inId = window.nlapiGetRecordId();
+                 var output = url.resolveScript({
+                 scriptId: "customscript_zk_sl_xm_add_allocation",
+                 deploymentId: "customdeploy_zk_sl_xm_add_allocation",
+                 params : { sltype : "process",rec_id : inId,rec_type : inType,additional : stAdditionalQuantity }});
+                 var response =  https.get(output);
+                 console.log("response",response);
+                 if(response.code === 200){
+                     window.location.reload();
+                 }
+            });
+        } else { alert("Value cannot be empty.") }
+    } catch (e) {console.log(e);}
+    jQuery(`:button[value="true"]`).click();
+ });
+ function submitCancel(id) {jQuery(`:button[value="false"]`).click();}
+ (function ($) {$(function ($, undefined) {$('.uir-message-buttons').last().hide();}) })(jQuery);
+    </script>

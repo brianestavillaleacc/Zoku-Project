@@ -1,0 +1,25 @@
+<suitelet scriptid="customscript_zk_sl_xm_add_allocation">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>ZK SL Additional Allocation</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/XM Studios Allocation/Suitelet Script/zk_sl_xm_add_allocation.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_zk_sl_xm_add_allocation">
+      <allemployees>F</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <eventtype></eventtype>
+      <isdeployed>T</isdeployed>
+      <isonline>F</isonline>
+      <loglevel>DEBUG</loglevel>
+      <runasrole>ADMINISTRATOR</runasrole>
+      <status>RELEASED</status>
+      <title>ZK SL Additional Allocation</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</suitelet>

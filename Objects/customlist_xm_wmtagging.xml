@@ -1,0 +1,24 @@
+<customlist scriptid="customlist_xm_wmtagging">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>WooCommerce Item Type List</name>
+  <customvalues>
+    <customvalue scriptid="val_98704_6961610_694">
+      <abbreviation>X</abbreviation>
+      <isinactive>F</isinactive>
+      <value>XM Exclusive</value>
+    </customvalue>
+    <customvalue scriptid="val_98705_6961610_192">
+      <abbreviation>E</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Event Exclusive</value>
+    </customvalue>
+    <customvalue scriptid="val_100805_6961610_241">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Store Exclusive</value>
+    </customvalue>
+  </customvalues>
+</customlist>

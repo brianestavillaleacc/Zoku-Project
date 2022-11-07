@@ -1,0 +1,99 @@
+<customlist scriptid="customlist_xm_itemlicense_list">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>License List</name>
+  <customvalues>
+    <customvalue scriptid="val_98745_6961610_636">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Warner Bros.</value>
+    </customvalue>
+    <customvalue scriptid="val_98709_6961610_270">
+      <abbreviation>D</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Disney</value>
+    </customvalue>
+    <customvalue scriptid="val_150730_6961610_722">
+      <abbreviation>H</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Hasbro</value>
+    </customvalue>
+    <customvalue scriptid="val_150731_6961610_581">
+      <abbreviation>T</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Toho</value>
+    </customvalue>
+    <customvalue scriptid="val_150732_6961610_584">
+      <abbreviation>T</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Tsuburaya</value>
+    </customvalue>
+    <customvalue scriptid="val_150733_6961610_679">
+      <abbreviation>G</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Global</value>
+    </customvalue>
+    <customvalue scriptid="val_150734_6961610_714">
+      <abbreviation>T</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Top Cow</value>
+    </customvalue>
+    <customvalue scriptid="val_150735_6961610_689">
+      <abbreviation>J</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Jade Dynasty</value>
+    </customvalue>
+    <customvalue scriptid="val_150736_6961610_114">
+      <abbreviation>S</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Saban</value>
+    </customvalue>
+    <customvalue scriptid="val_150737_6961610_304">
+      <abbreviation>O</abbreviation>
+      <isinactive>F</isinactive>
+      <value>One Punch Man</value>
+    </customvalue>
+    <customvalue scriptid="val_150738_6961610_923">
+      <abbreviation>A</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Art Series</value>
+    </customvalue>
+    <customvalue scriptid="val_153975_6961610_317">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Fung Wan</value>
+    </customvalue>
+    <customvalue scriptid="val_154339_6961610_857">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Dark Horse</value>
+    </customvalue>
+    <customvalue scriptid="val_154340_6961610_572">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Art series</value>
+    </customvalue>
+    <customvalue scriptid="val_472534_6961610_sb1_483">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Marvel</value>
+    </customvalue>
+    <customvalue scriptid="val_472552_6961610_sb1_201">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Demon Slayer</value>
+    </customvalue>
+    <customvalue scriptid="val_472583_6961610_sb1_429">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>DC</value>
+    </customvalue>
+    <customvalue scriptid="val_472584_6961610_sb1_859">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>XM</value>
+    </customvalue>
+  </customvalues>
+</customlist>

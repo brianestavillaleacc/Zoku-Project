@@ -1,0 +1,19 @@
+<customlist scriptid="customlist_xm_preorder_instock">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Pre-order/In-stock</name>
+  <customvalues>
+    <customvalue scriptid="val_448011_6961610_sb1_947">
+      <abbreviation>P</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Pre-order</value>
+    </customvalue>
+    <customvalue scriptid="val_448012_6961610_sb1_379">
+      <abbreviation>I</abbreviation>
+      <isinactive>F</isinactive>
+      <value>In-stock</value>
+    </customvalue>
+  </customvalues>
+</customlist>

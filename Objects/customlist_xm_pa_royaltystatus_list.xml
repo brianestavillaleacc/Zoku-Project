@@ -1,0 +1,19 @@
+<customlist scriptid="customlist_xm_pa_royaltystatus_list">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Royalty Reporting Status List</name>
+  <customvalues>
+    <customvalue scriptid="val_100662_6961610_946">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Complete</value>
+    </customvalue>
+    <customvalue scriptid="val_100663_6961610_229">
+      <abbreviation>I</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Incomplete</value>
+    </customvalue>
+  </customvalues>
+</customlist>

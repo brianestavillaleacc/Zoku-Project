@@ -1,0 +1,24 @@
+<customlist scriptid="customlistzk_pa_allocation_status">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Allocation Status</name>
+  <customvalues>
+    <customvalue scriptid="val_25469_6961610_sb1_389">
+      <abbreviation>A</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Acknowledged</value>
+    </customvalue>
+    <customvalue scriptid="val_25470_6961610_sb1_471">
+      <abbreviation>P</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Pending</value>
+    </customvalue>
+    <customvalue scriptid="val_39399_6961610_sb1_162">
+      <abbreviation>C</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Cancelled</value>
+    </customvalue>
+  </customvalues>
+</customlist>

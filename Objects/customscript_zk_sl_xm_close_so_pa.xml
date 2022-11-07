@@ -1,0 +1,25 @@
+<suitelet scriptid="customscript_zk_sl_xm_close_so_pa">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>ZK SL XM Close Sales Order</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/XM Studios Allocation/Suitelet Script/zk_sl_xm_close_so_pa.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_zk_sl_xm_close_so_pa">
+      <allemployees>T</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <eventtype></eventtype>
+      <isdeployed>T</isdeployed>
+      <isonline>T</isonline>
+      <loglevel>DEBUG</loglevel>
+      <runasrole>ADMINISTRATOR</runasrole>
+      <status>RELEASED</status>
+      <title>ZK SL XM Close Sales Order</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</suitelet>

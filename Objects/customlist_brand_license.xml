@@ -1,0 +1,154 @@
+<customlist scriptid="customlist_brand_license">
+  <description></description>
+  <isinactive>F</isinactive>
+  <ismatrixoption>F</ismatrixoption>
+  <isordered>T</isordered>
+  <name>Brand License</name>
+  <customvalues>
+    <customvalue scriptid="val_38952_6961610_sb1_605">
+      <abbreviation>L</abbreviation>
+      <isinactive>F</isinactive>
+      <value>DC Batman</value>
+    </customvalue>
+    <customvalue scriptid="val_38953_6961610_sb1_501">
+      <abbreviation>L</abbreviation>
+      <isinactive>F</isinactive>
+      <value>DC Batman Stylised</value>
+    </customvalue>
+    <customvalue scriptid="val_38954_6961610_sb1_438">
+      <abbreviation>L</abbreviation>
+      <isinactive>F</isinactive>
+      <value>DC Justice League Stylised</value>
+    </customvalue>
+    <customvalue scriptid="val_38955_6961610_sb1_774">
+      <abbreviation>L</abbreviation>
+      <isinactive>F</isinactive>
+      <value>DC Justice League</value>
+    </customvalue>
+    <customvalue scriptid="val_98746_6961610_967">
+      <abbreviation>M</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Marvel</value>
+    </customvalue>
+    <customvalue scriptid="val_150739_6961610_770">
+      <abbreviation>S</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Star Wars</value>
+    </customvalue>
+    <customvalue scriptid="val_150740_6961610_819">
+      <abbreviation>F</abbreviation>
+      <isinactive>F</isinactive>
+      <value>FOX</value>
+    </customvalue>
+    <customvalue scriptid="val_150741_6961610_436">
+      <abbreviation>M</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Mickey and Friends</value>
+    </customvalue>
+    <customvalue scriptid="val_150742_6961610_596">
+      <abbreviation>T</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Transformers</value>
+    </customvalue>
+    <customvalue scriptid="val_150743_6961610_755">
+      <abbreviation>M</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Magic: The Gathering</value>
+    </customvalue>
+    <customvalue scriptid="val_150744_6961610_935">
+      <abbreviation>D</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Dungeons &amp; Dragons</value>
+    </customvalue>
+    <customvalue scriptid="val_150745_6961610_918">
+      <abbreviation>G</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Godzilla</value>
+    </customvalue>
+    <customvalue scriptid="val_150746_6961610_860">
+      <abbreviation>U</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Ultraman</value>
+    </customvalue>
+    <customvalue scriptid="val_150747_6961610_809">
+      <abbreviation>I</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Iron Maiden</value>
+    </customvalue>
+    <customvalue scriptid="val_150748_6961610_335">
+      <abbreviation>T</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Top Cow</value>
+    </customvalue>
+    <customvalue scriptid="val_150749_6961610_651">
+      <abbreviation>J</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Jade Dynasty</value>
+    </customvalue>
+    <customvalue scriptid="val_150751_6961610_621">
+      <abbreviation>O</abbreviation>
+      <isinactive>F</isinactive>
+      <value>One Punch Man</value>
+    </customvalue>
+    <customvalue scriptid="val_150752_6961610_551">
+      <abbreviation>J</abbreviation>
+      <isinactive>F</isinactive>
+      <value>Jungle Queen by Frank Cho</value>
+    </customvalue>
+    <customvalue scriptid="val_151830_6961610_995">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Power Rangers</value>
+    </customvalue>
+    <customvalue scriptid="val_153976_6961610_116">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Fung Wan</value>
+    </customvalue>
+    <customvalue scriptid="val_154341_6961610_850">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Hellboy</value>
+    </customvalue>
+    <customvalue scriptid="val_466442_6961610_sb1_177">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Sanrio</value>
+    </customvalue>
+    <customvalue scriptid="val_466443_6961610_sb1_721">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Goldwood</value>
+    </customvalue>
+    <customvalue scriptid="val_466444_6961610_sb1_392">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Singapore Mint</value>
+    </customvalue>
+    <customvalue scriptid="val_466445_6961610_sb1_176">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Simply Toys</value>
+    </customvalue>
+    <customvalue scriptid="val_467085_6961610_sb1_424">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Peanuts</value>
+    </customvalue>
+    <customvalue scriptid="val_467086_6961610_sb1_484">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Pokemon</value>
+    </customvalue>
+    <customvalue scriptid="val_472535_6961610_sb1_911">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>Royal Selangor</value>
+    </customvalue>
+    <customvalue scriptid="val_472585_6961610_sb1_195">
+      <abbreviation></abbreviation>
+      <isinactive>F</isinactive>
+      <value>XM</value>
+    </customvalue>
+  </customvalues>
+</customlist>
