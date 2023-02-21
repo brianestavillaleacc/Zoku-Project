@@ -34,14 +34,27 @@ define(['N/record','../Library/zk_xm_library'], function(record, libHelper) {
                 // }
 
                 // if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
-                if(objProductAllocations[intIndex].isInternalDistributor) {
-                    flTotalAllocationInternalDistributor += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
-                }
+                // if(objProductAllocations[intIndex].isInternalDistributor) {
+                //     flTotalAllocationInternalDistributor += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
+                // }
             }
 
             intNewManufacturedQuantity = parseFloat(parseFloat(intQuantity) - parseFloat(flTotalAllocated + parseFloat(intDistributorPool)));
 
-            if(parseFloat(intNewManufacturedQuantity - flTotalAllocationInternalDistributor) < 0) {
+            log.debug('beforeSubmit logs', {
+                intQuantity: intQuantity,
+                flTotalAllocated: flTotalAllocated,
+                intNewManufacturedQuantity: intNewManufacturedQuantity,
+                flTotalAllocationInternalDistributor: flTotalAllocationInternalDistributor,
+                lessTotalAllocationInternDistributor: parseFloat(intNewManufacturedQuantity - flTotalAllocationInternalDistributor)
+            });
+
+            if(parseFloat(intDistributorPool)<0) {
+                throw "Distributor Pool should not be negative.";
+            }
+
+            // if(parseFloat(intNewManufacturedQuantity - flTotalAllocationInternalDistributor) < 0) {
+            if(parseFloat(intNewManufacturedQuantity) < 0) {
                 throw "Available Quantity should not be negative.";
             }
         }
@@ -66,32 +79,30 @@ define(['N/record','../Library/zk_xm_library'], function(record, libHelper) {
             var flTotalAllocationInternalDistributor = 0;
             var flTotalAllocated = 0;
 
-            log.debug("objProductAllocations", objProductAllocations);
-
             for (var intIndex in objProductAllocations) {
 
-                if(objProductAllocations[intIndex].isInternalDistributor) {
-                    // if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged") {
-                        flTotalAllocationInternalDistributor += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
-                    // }
-                } else {
-                    // if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending" || objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged") {
-                        flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
-                    // }
-                }
+                // if(objProductAllocations[intIndex].isInternalDistributor) {
+                //     if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged") {
+                //         flTotalAllocationInternalDistributor += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_ordered_quantity || 0);
+                //     }
+                // } else {
+                //     if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending" || objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged") {
+                        flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_ordered_quantity || 0);
+                //     }
+                // }
 
             }
 
             intNewManufacturedQuantity = parseFloat(parseFloat(intQuantity) - parseFloat(flTotalAllocated));
 
-            log.debug('logs', {
+            log.debug('afterSubmit logs', {
                 intQuantity: intQuantity,
                 flTotalAllocated: flTotalAllocated,
                 intNewManufacturedQuantity: intNewManufacturedQuantity,
                 flTotalAllocationInternalDistributor: flTotalAllocationInternalDistributor,
                 lessTotalAllocationInternDistributor: parseFloat(intNewManufacturedQuantity - flTotalAllocationInternalDistributor)
             });
-            objCurrentRecord.setValue({fieldId: 'custitem_zk_available_manufacture_qty', value: parseFloat(intNewManufacturedQuantity - flTotalAllocationInternalDistributor)});
+            objCurrentRecord.setValue({fieldId: 'custitem_zk_available_manufacture_qty', value: parseFloat(intNewManufacturedQuantity - flTotalAllocationInternalDistributor) });
         } else {
             objCurrentRecord.setValue({fieldId: 'custitem_zk_available_manufacture_qty', value: objCurrentRecord.getValue({fieldId: 'custitem_zk_estimated_manufacture_qty'})});
         }

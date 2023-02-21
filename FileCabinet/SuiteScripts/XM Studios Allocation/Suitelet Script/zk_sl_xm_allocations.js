@@ -56,7 +56,7 @@ define(['N/record', 'N/render', 'N/file', 'N/search', 'N/ui/serverWidget', 'N/ta
             var flDepositAmount = (txtProduct) ? objItems[txtProduct].depositamount : 0;
             var intAvailableManufactureQuantity = (txtProduct) ? objItems[txtProduct].availablemanufacturequantity : 0;
             var intDistributorPool = (txtProduct) ? objItems[txtProduct].distributorpool : 0;
-            var flRemainder = calculateRemainder(intAvailableManufactureQuantity, objProductAllocations, intDistributorPool);
+            var flRemainder = calculateRemainder(intEstimatedQuantity, objProductAllocations, intDistributorPool);
             var objDefaultValues = {
                 stProduct: txtProduct,
                 stBrand: txtBrand,
@@ -106,17 +106,18 @@ define(['N/record', 'N/render', 'N/file', 'N/search', 'N/ui/serverWidget', 'N/ta
             var flTotalAllocated = 0;
             var flTotalDeductions = 0;
             for (var intIndex in objProductAllocations) {
-                if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
-                    flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-                }
-                if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
-                    flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-                }
+                // if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
+                    flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
+                // }
+                // if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
+                //     flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
+                // }
             }
             log.debug("intDistributorPool", intDistributorPool);
             log.debug("flTotalAllocated", flTotalAllocated);
 
             flTotalDeductions = parseFloat(flTotalAllocated + parseFloat(intDistributorPool));
+            // flTotalDeductions = parseFloat(flTotalAllocated);
             return parseFloat(intAvailableManufactureQuantity - flTotalDeductions);
         }
 

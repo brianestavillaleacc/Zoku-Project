@@ -47,24 +47,12 @@ define(['N/search'], function(search) {
                     var lookupFieldItem = search.lookupFields({
                         type: search.Type.ITEM,
                         id: currentRecord.getValue("custrecord_zk_pa_item"),
-                        columns: ['custitem_zk_available_manufacture_qty','custitem_zk_distributor_pool']
+                        columns: ['custitem_zk_estimated_manufacture_qty','custitem_zk_distributor_pool']
                     });
 
-                    flTotalAvailableQuantiity = lookupFieldItem['custitem_zk_available_manufacture_qty'] || 0;
+                    flTotalAvailableQuantiity = lookupFieldItem['custitem_zk_estimated_manufacture_qty'] || 0;
                     var intDistributorPool = lookupFieldItem['custitem_zk_distributor_pool'] || 0;
                     var intRemainder = calculateRemainder(flTotalAvailableQuantiity, objProductAllocations, intDistributorPool);
-                    // for(var intIndex in objProductAllocations) {
-                    //     if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
-                    //         flTotalPendingProductAllocation += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
-                    //     }
-                    //
-                    //     if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
-                    //         flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-                    //     }
-                    //     if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
-                    //         flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-                    //     }
-                    // }
 
                     if(parseFloat(intRemainder - flAdditionalQty)<0) {
                         alert("Not Enough Available Quantity.");
@@ -175,15 +163,16 @@ define(['N/search'], function(search) {
         var flTotalAllocated = 0;
         var flTotalDeductions = 0;
         for (var intIndex in objProductAllocations) {
-            if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
-                flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-            }
-            if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
-                flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-            }
+            // if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
+                flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
+            // }
+            // if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
+            //     flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
+            // }
         }
 
         flTotalDeductions = parseFloat(flTotalAllocated + parseFloat(intDistributorPool));
+        //flTotalDeductions = parseFloat(flTotalAllocated);
         return parseFloat(intAvailableManufactureQuantity - flTotalDeductions);
     }
 

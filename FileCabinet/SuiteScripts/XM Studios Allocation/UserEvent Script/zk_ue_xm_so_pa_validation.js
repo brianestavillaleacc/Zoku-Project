@@ -14,7 +14,7 @@ Script Type         : User Event Script
 Saved Searches      : NONE
 */
 
-define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record'], function (serverWidget, libHelper, search, record) {
+define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record', 'N/runtime'], function (serverWidget, libHelper, search, record, runtime) {
 
     /**
      * Defines the function definition that is executed after record is submitted.
@@ -40,16 +40,14 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
     const DEV_NOTIFY = false
 
     function afterSubmit(scriptContext) {
-        try{
+        try {
             var oldRecord = scriptContext.oldRecord;
             var newRecord = scriptContext.newRecord;
-
             var inPOSMachine = newRecord.getValue("custbody_pos3_machine");
             var stPOSReceiptNumber = newRecord.getValue("custbody_pos3_receiptnumber");
             var bolIsPOS = inPOSMachine && stPOSReceiptNumber? true: false
             var bolIsWebsiteSales = inPOSMachine && !stPOSReceiptNumber? true: false
             var bolIsPosOrWebsiteSales = bolIsPOS || bolIsWebsiteSales? true: false
-
             const objNewItemWithProductAllocation = getInventoryItemsWithProductAllocation(oldRecord)
 
             if(scriptContext.type == 'edit' || scriptContext.type == 'xedit') {
@@ -58,9 +56,8 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
                     type: newRecord.type,
                     id: newRecord.id,
                     columns: ['status']
-                })
-                var intStatus = recSO.status[0].value
-                log.debug("afterSubmit intStatus", intStatus);
+                });
+                var intStatus = recSO.status[0].value;
 
                 if (intStatus ==  STATUS_CLOSED && newRecord.getValue("status") != "Closed") {
                     for(var intKey in objNewItemWithProductAllocation) {
@@ -71,9 +68,6 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
                     }
                 }
             } else if(scriptContext.type == 'create') {
-
-                log.debug('afterSubmit: create params', {inPOSMachine:inPOSMachine, stPOSReceiptNumber:stPOSReceiptNumber, recordid:newRecord.id})
-
                 if(bolIsPosOrWebsiteSales){
 
                     var allItems = getAllLineItems(newRecord, 'item');
@@ -152,8 +146,8 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
         }
     }
 
-    function beforeSubmit(context) {
-        // try {
+    function beforeSarrProductAllocationubmit(context) {
+        try {
         var newRecord = context.newRecord;
         var oldRecord = context.oldRecord;
 
@@ -162,9 +156,9 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
         var bolIsPOS = inPOSMachine && stPOSReceiptNumber? true: false
         var bolIsWebsiteSales = inPOSMachine && !stPOSReceiptNumber? true: false
         var bolIsPosOrWebsiteSales = bolIsPOS || bolIsWebsiteSales? true: false
-        var intDistributorId = bolIsPOS? XM_STORE_ALLOCATION_DISTRIBUTOR: bolIsWebsiteSales? XM_WEBSITE_WOO_COMMERCE_DISTRIBUTOR: 0
-
-        log.debug('beforeSubmit: params', {inPOSMachine:inPOSMachine, stPOSReceiptNumber:stPOSReceiptNumber})
+        var intDistributorId = bolIsPOS? XM_STORE_ALLOCATION_DISTRIBUTOR: bolIsWebsiteSales? XM_WEBSITE_WOO_COMMERCE_DISTRIBUTOR: 0;
+        var errorMessage = "";
+        // log.debug('beforeSubmit: params', {inPOSMachine:inPOSMachine, stPOSReceiptNumber:stPOSReceiptNumber})
 
         if(context.type == "create") {
             if(bolIsPosOrWebsiteSales) {
@@ -179,12 +173,30 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
                     return objItem.is_preorder == true
                 })
                 checkIfPreOrderHasNoAdvancedItem(arrPreOrderItems)
-                arrPreOrderItems = appendProductAllocation(arrPreOrderItems, intDistributorId)
+                arrPreOrderItems = appendProductAllocation(arrPreOrderItems, intDistributorId);
+
+                /** CHECK IF PRODUCT ALLOCATION IS EMPTY **/
+                for(var intIndex in arrPreOrderItems) {
+                    if(!arrPreOrderItems[intIndex].custcol_zoku_product_allocation) {
+                        errorMessage = "One or More Item(s) doesn't have available Product Allocation Record or Quantity is not enough to process the Sales Order. \n";
+                    }
+                }
 
                 var arrRegularItems = arrInventoryItems.filter(function(objItem) {
                     return objItem.is_preorder == false
                 })
-                arrRegularItems = appendProductAllocation(arrRegularItems, intDistributorId)
+                arrRegularItems = appendProductAllocation(arrRegularItems, intDistributorId);
+
+                /** CHECK IF PRODUCT ALLOCATION IS EMPTY **/
+                for(var intIndex in arrRegularItems) {
+                    if(!arrRegularItems[intIndex].custcol_zoku_product_allocation) {
+                        errorMessage = "One or More Item(s) doesn't have available Product Allocation Record or Quantity is not enough to process the Sales Order. \n";
+                    }
+                }
+
+                if(runtime.executionContext == runtime.ContextType.USER_INTERFACE && errorMessage) {
+                    throw errorMessage;
+                }
 
                 const intLocation = newRecord.getValue({fieldId: 'location'})
                 newRecord.setValue({fieldId: 'orderstatus', value: 'B'})
@@ -285,8 +297,7 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
         } else if(context.type == "cancel") {
             checkCancellationProcess(context);
         } else if (context.type == "delete") {
-            const objNewItemWithProductAllocation = getInventoryItemsWithProductAllocation(newRecord)
-            log.debug("objNewItemWithProductAllocation", objNewItemWithProductAllocation);
+            const objNewItemWithProductAllocation = getInventoryItemsWithProductAllocation(newRecord);
             if (oldRecord.getValue("status") != STATUS_CANCELLED && oldRecord.getValue("status") != STATUS_CLOSED) {
                 for(var intKey in objNewItemWithProductAllocation) {
                     var intProductAllocation = objNewItemWithProductAllocation[intKey].productAllocation
@@ -307,40 +318,58 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
             var arrNewLines = getAllLineItems(newRecord, 'item')
             arrNewLines = arrNewLines.length == 0? []: appendLookupItems(arrNewLines)
             if(arrNewLines == 0) return
-            arrNewLines = appendExistingProductAllocationDetails(arrNewLines)
-
-            log.debug('beforeSubmit edit', {
-                arrOldLines: arrOldLines,
-                arrNewLines: arrNewLines
-            })
+            arrNewLines = appendExistingProductAllocationDetails(arrNewLines);
 
             arrNewLines.forEach(function(objNewLine, lineIndex) {
-                if(!objNewLine['custcol_zoku_product_allocation']) return
+                arrOldLines.forEach(function(objOldLine, oldLineIndex) {
+                    var oldQuantity = arrOldLines[oldLineIndex].quantity;
+                    var oldProductAllocationLine = arrOldLines[oldLineIndex].custcol_zoku_product_allocation;
+                    var newQuantity = arrNewLines[lineIndex].quantity;
+                    var newProductAllocationLine = arrNewLines[lineIndex].custcol_zoku_product_allocation;
 
-                var oldQuantity = arrOldLines[lineIndex].quantity;
-                var oldProductAllocationLine = arrOldLines[lineIndex].custcol_zoku_product_allocation;
-                var newQuantity = arrNewLines[lineIndex].quantity;
-                var newProductAllocationLine = arrNewLines[lineIndex].custcol_zoku_product_allocation;
+                    if(arrNewLines[lineIndex].custcol_zoku_product_allocation != "" && arrNewLines[lineIndex].line == arrOldLines[oldLineIndex].line && oldQuantity != newQuantity) {
 
-                if(oldQuantity != newQuantity || oldProductAllocationLine != newProductAllocationLine) {
-                    updateEstimatedManufacturedQuantity(context, lineIndex);
-                    updateProductAllocationLeftOverAndOrderedQty(objNewLine, context);
+                        updateEstimatedManufacturedQuantity(context, lineIndex);
+                        updateProductAllocationLeftOverAndOrderedQty(arrNewLines[lineIndex], context);
 
-                    const stLineCount = newRecord.getLineCount({sublistId: 'item'})
-                    for(var intIndex=0; intIndex<stLineCount; intIndex++) {
-                        var intItem = newRecord.getSublistValue({sublistId: 'item', fieldId: 'item', line:intIndex})
-                        if(intItem == objNewLine['advanced_item_id']) {
-                            var intAdvancedItemQty = newRecord.getSublistValue({sublistId: 'item', fieldId: 'quantity', line:intIndex})
-                            newRecord.setSublistValue({
-                                sublistId: 'item',
-                                fieldId: 'quantity',
-                                line:intIndex,
-                                value: intAdvancedItemQty < 1? (newQuantity*-1):newQuantity
-                            })
+                        var stLineCount = newRecord.getLineCount({sublistId: 'item'});
+                        for(var intIndex=0; intIndex<stLineCount; intIndex++) {
+                            var intItem = newRecord.getSublistValue({sublistId: 'item', fieldId: 'item', line:intIndex})
+                            if(intItem == arrNewLines[lineIndex].advanced_item_id) {
+                                var intAdvancedItemQty = newRecord.getSublistValue({sublistId: 'item', fieldId: 'quantity', line:intIndex})
+                                newRecord.setSublistValue({
+                                    sublistId: 'item',
+                                    fieldId: 'quantity',
+                                    line:intIndex,
+                                    value: intAdvancedItemQty < 1? (newQuantity*-1):newQuantity
+                                })
+                            }
+                        }
+                    } else if(arrNewLines[lineIndex].custcol_zoku_product_allocation == "" && arrNewLines[lineIndex].line == arrOldLines[oldLineIndex].line) {
+                        var pdQuantity = "";
+                        var paIndx = 0;
+                        arrNewLines.forEach(function(objdata, indx) {
+                            if(objdata.custcol_zoku_product_allocation != "") {
+                                pdQuantity = objdata.quantity;
+                                paIndx = indx;
+                            }
+                        });
+                        var stLineCount = newRecord.getLineCount({sublistId: 'item'})
+                        for(var intIndex=0; intIndex<stLineCount; intIndex++) {
+                            var intItem = newRecord.getSublistValue({sublistId: 'item', fieldId: 'item', line:intIndex})
+                            if(intItem == arrNewLines[paIndx].advanced_item_id) {
+                                var intAdvancedItemQty = newRecord.getSublistValue({sublistId: 'item', fieldId: 'quantity', line:intIndex})
+                                newRecord.setSublistValue({
+                                    sublistId: 'item',
+                                    fieldId: 'quantity',
+                                    line:intIndex,
+                                    value: intAdvancedItemQty < 1? (pdQuantity*-1):pdQuantity
+                                })
+                            }
                         }
                     }
-                }
-            })
+                });
+            });
 
             var recSO = search.lookupFields({
                 type: newRecord.type,
@@ -351,11 +380,11 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
             log.debug("beforeSubmit intStatus", intStatus);
         }
 
-        // } catch(objError) {
-        //     log.error('error catched', objError)
-        //     if(DEV_NOTIFY == true) throw DEV_NOTICE
-        //     //throw objError
-        // }
+        } catch(objError) {
+            log.error('error catched', objError)
+            if(DEV_NOTIFY == true) throw DEV_NOTICE
+            //throw objError
+        }
 
     }
 
@@ -631,14 +660,15 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
             if(intOldProductAllocationLine == intNewProductAllocationLine) {
                 if(intOldQuantity < intNewQuantity) { //deduct left overs and increase order quantity
                     intAddedQuantity = intNewQuantity - intOldQuantity
-                    if(objItem['left_overs']!="" || objItem['left_overs']>0){
-                        flNewLeftOver = parseFloat(objItem['left_overs']) - intAddedQuantity
+                    if(objItem['left_overs']!="" || parseFloat(objItem['left_overs'])>=0){
+                        flNewLeftOver = (parseFloat(objItem['left_overs'])<=0) ? 0 : parseFloat(objItem['left_overs']) - intAddedQuantity;
                     }
+
                     flOrderedQuantity = parseFloat(objItem['ordered_quantity']) || 0
                     flOrderedQuantity = flOrderedQuantity + intAddedQuantity
                 } else if(intOldQuantity > intNewQuantity) { //increase left overs and deduct ordered quantity
                     intDeductedQuantity = intOldQuantity - intNewQuantity;
-                    if(objItem['left_overs']!="" || objItem['left_overs']>0){
+                    if(objItem['left_overs']!="" || parseFloat(objItem['left_overs'])>=0){
                         flNewLeftOver = parseFloat(objItem['left_overs']) + intDeductedQuantity;
                     }
 
@@ -657,8 +687,8 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
                 });
             } else {
                 if(!intOldProductAllocationLine) {
-                    if(objItem['left_overs']!="" || objItem['left_overs']>0){
-                        flNewLeftOver = parseFloat(objItem['left_overs']) - intNewQuantity;
+                    if(objItem['left_overs']!="" || parseFloat(objItem['left_overs'])>=0){
+                        flNewLeftOver = (parseFloat(objItem['left_overs'])<=0) ? 0 : parseFloat(objItem['left_overs']) - intNewQuantity;
                         flOrderedQuantity = parseFloat(objItem['ordered_quantity']) || 0;
                         flOrderedQuantity = flOrderedQuantity + intNewQuantity;
                     }
@@ -720,6 +750,7 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
         var arrInvoiceLineItems = []
         var arrItemFieldMapping = {
             'item': 'item',
+            'line': 'line',
             'quantity': 'quantity',
             'rate': 'rate',
             'amount': 'amount',
@@ -738,9 +769,10 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
                 objItem[stItemName] = objRecord.getSublistValue({
                     sublistId: stItemType,
                     fieldId: arrItemFieldMapping[stItemName],
-                    line: itemIndex,
+                    line: itemIndex
                 })
             }
+
             if(!objItem['amount']) objItem['amount'] = 0
             objItem['itemIndex'] = itemIndex
             arrInvoiceLineItems.push(objItem)
@@ -776,7 +808,7 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
                 search.createColumn({name: "custitem_zk_advance_item", join: "CUSTRECORD_ZK_PA_ITEM"}),
                 search.createColumn({name: "custitem_zk_deposit_amount", join: "CUSTRECORD_ZK_PA_ITEM"}),
                 search.createColumn({name: "category", join: "CUSTRECORD_ZK_PA_DISTRIBUTOR"}),
-                search.createColumn({name: "pricinggroup", join: "CUSTRECORD_ZK_PA_ITEM"}),
+                search.createColumn({name: "pricinggroup", join: "CUSTRECORD_ZK_PA_ITEM"})
             ]
         }).run().getRange({start: 0, end: 100})
 
@@ -795,30 +827,52 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record']
             advanced_item_id: srAllocationProduct[0].getValue({name: "custitem_zk_advance_item", join: "CUSTRECORD_ZK_PA_ITEM"}),
             deposit_amount: srAllocationProduct[0].getValue({name: "custitem_zk_deposit_amount", join: "CUSTRECORD_ZK_PA_ITEM"}),
             category: srAllocationProduct[0].getValue({name: "category", join: "CUSTRECORD_ZK_PA_DISTRIBUTOR"}),
-            category: srAllocationProduct[0].getValue({name: "category", join: "CUSTRECORD_ZK_PA_DISTRIBUTOR"})
+            pricinggroup: srAllocationProduct[0].getValue({name: "pricinggroup", join: "CUSTRECORD_ZK_PA_ITEM"})
         }
         return objResult
     }
 
     function appendLookupItems(arrItemsToBeSet) {
-        return arrItemsToBeSet.map(function(objItem) {
-            if(objItem['itemtype'] == 'InvtPart' || objItem['itemtype'] == 'Kit') {
+
+        for(var intIndex in arrItemsToBeSet) {
+
+            if(arrItemsToBeSet[intIndex]['itemtype'] == 'InvtPart' || arrItemsToBeSet[intIndex]['itemtype'] == 'Kit') {
                 const recItem = search.lookupFields({
                     type: search.Type.ITEM,
-                    id: objItem['item'],
+                    id: arrItemsToBeSet[intIndex]['item'],
                     columns: ['custitem_zk_deposit_amount', 'custitem_zk_advance_item', 'custitem_preorderitem']
                 })
-                objItem['deposit_amount'] = Number(recItem.custitem_zk_deposit_amount)
-                objItem['advanced_item_id'] = recItem.custitem_zk_advance_item.length == 0? '': recItem.custitem_zk_advance_item[0].value
-                objItem['is_preorder'] = (recItem.custitem_preorderitem.length == 0 || recItem.custitem_preorderitem[0].value != PREORDER_ITEM)? false: true
-                objItem['is_allocated'] = (recItem.custitem_preorderitem.length == 0 || recItem.custitem_preorderitem[0].value != IN_STOCK)? false: true
+                arrItemsToBeSet[intIndex]['deposit_amount'] = Number(recItem.custitem_zk_deposit_amount)
+                arrItemsToBeSet[intIndex]['advanced_item_id'] = recItem.custitem_zk_advance_item.length == 0? '': recItem.custitem_zk_advance_item[0].value
+                arrItemsToBeSet[intIndex]['is_preorder'] = (recItem.custitem_preorderitem.length == 0 || recItem.custitem_preorderitem[0].value != PREORDER_ITEM)? false: true
+                arrItemsToBeSet[intIndex]['is_allocated'] = (recItem.custitem_preorderitem.length == 0 || recItem.custitem_preorderitem[0].value != IN_STOCK)? false: true
             } else {
-                objItem['is_preorder'] = false;
-                objItem['is_allocated'] = false;
-            }
+                arrItemsToBeSet[intIndex]['is_preorder'] = false;
+                arrItemsToBeSet[intIndex]['is_allocated'] = false;
 
-            return objItem
-        })
+            }
+        }
+
+        return arrItemsToBeSet;
+
+        // return arrItemsToBeSet.map(function(objItem) {
+        //     if(objItem['itemtype'] == 'InvtPart' || objItem['itemtype'] == 'Kit') {
+        //         const recItem = search.lookupFields({
+        //             type: search.Type.ITEM,
+        //             id: objItem['item'],
+        //             columns: ['custitem_zk_deposit_amount', 'custitem_zk_advance_item', 'custitem_preorderitem']
+        //         })
+        //         objItem['deposit_amount'] = Number(recItem.custitem_zk_deposit_amount)
+        //         objItem['advanced_item_id'] = recItem.custitem_zk_advance_item.length == 0? '': recItem.custitem_zk_advance_item[0].value
+        //         objItem['is_preorder'] = (recItem.custitem_preorderitem.length == 0 || recItem.custitem_preorderitem[0].value != PREORDER_ITEM)? false: true
+        //         objItem['is_allocated'] = (recItem.custitem_preorderitem.length == 0 || recItem.custitem_preorderitem[0].value != IN_STOCK)? false: true
+        //     } else {
+        //         objItem['is_preorder'] = false;
+        //         objItem['is_allocated'] = false;
+        //     }
+        //
+        //     return objItem
+        // })
     }
 
     function checkIfPreOrderHasNoAdvancedItem(arrPreOrderItems) {

@@ -72,10 +72,10 @@ define(['N/search','N/record'], function(search, record) {
 
         if(context.sublistId == "item" && context.fieldId == "custcol_discount_percent" ||  context.fieldId == "custcol_original_rate" ||  context.fieldId == "quantity") {
             if(context.fieldId == "quantity") {
-
-                if(!currentRecord.getCurrentSublistValue({sublistId:"item", fieldId:"custcol_zoku_product_allocation"})) return;
-
                 var intProductAllocationId = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId: "custcol_zoku_product_allocation"});
+
+                if(currentRecord.getCurrentSublistValue({sublistId:"item", fieldId:"custcol_zoku_product_allocation"}) == "") { return; }
+
                 var intItemId = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId: "item"});
                 var objProductAllocations = getProductAllocations(intItemId);
 
@@ -90,10 +90,10 @@ define(['N/search','N/record'], function(search, record) {
                         var lookupFieldItem = search.lookupFields({
                             type: search.Type.ITEM,
                             id: intItemId,
-                            columns: ['custitem_zk_available_manufacture_qty','type','isserialitem','islotitem','custitem_zk_distributor_pool']
+                            columns: ['custitem_zk_estimated_manufacture_qty','type','isserialitem','islotitem','custitem_zk_distributor_pool']
                         });
 
-                        var flTotalAvailableQuantity = lookupFieldItem['custitem_zk_available_manufacture_qty'] || 0;
+                        var flTotalAvailableQuantity = lookupFieldItem['custitem_zk_estimated_manufacture_qty'] || 0;
                         var intDistributorPool = lookupFieldItem['custitem_zk_distributor_pool'] || 0;
                         var intRemainder = calculateRemainder(flTotalAvailableQuantity, objProductAllocations, intDistributorPool);
 
@@ -119,35 +119,62 @@ define(['N/search','N/record'], function(search, record) {
             currentRecord.setCurrentSublistValue({sublistId: "item", fieldId:"custcol_original_rate",value:flRate});
         }
 
-        if(context.sublistId == "item" && context.fieldId == "rate") {
-            if(currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"line"}) == 1) {
-                var flRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"rate"});
-                var flAmount = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"amount"});
-                var flOriginalRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"custcol_original_rate"});
-                var currentLine = currentRecord.selectLine({ sublistId: 'item', line: 2 });
-                currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "rate", value: flRate * -1, ignoreFieldChange: true});
-                currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "amount", value: flAmount * -1,ignoreFieldChange: true});
-                currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "custcol_original_rate", value: flOriginalRate * -1,ignoreFieldChange: true});
-                currentLine.commitLine({ sublistId: 'item' });
-            }
-        }
+        // if(context.sublistId == "item" && context.fieldId == "rate") {
+        //     if(currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"line"}) == 1) {
+        //         var flRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"rate"});
+        //         var flAmount = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"amount"});
+        //         var flOriginalRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"custcol_original_rate"});
+        //         var currentLine = currentRecord.selectLine({ sublistId: 'item', line: 2 });
+        //         currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "rate", value: flRate * -1, ignoreFieldChange: true});
+        //         currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "amount", value: flAmount * -1,ignoreFieldChange: true});
+        //         currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "custcol_original_rate", value: flOriginalRate * -1,ignoreFieldChange: true});
+        //         currentLine.commitLine({ sublistId: 'item' });
+        //     }
+        // }
     }
 
-    // function validateLine(context) {
-    //     var currentRecord = context.currentRecord;
-    //     if(currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"line"}) == "1") {
-    //         if(context.sublistId == "item") {
-    //             var flRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"rate"});
-    //             var flAmount = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"amount"});
-    //             var flOriginalRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"custcol_original_rate"});
-    //             var currentLine = currentRecord.selectLine({ sublistId: 'item', line: 2 });
-    //             currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "rate", value: flRate * -1, ignoreFieldChange: true});
-    //             currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "amount", value: flAmount * -1,ignoreFieldChange: true});
-    //             currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "custcol_original_rate", value: flOriginalRate * -1,ignoreFieldChange: true});
-    //             currentLine.commitLine({ sublistId: 'item' });
-    //         }
-    //     }
-    // }
+    function validateLine(context) {
+        var currentRecord = context.currentRecord;
+        var intProductAllocationId = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId: "custcol_zoku_product_allocation"});
+
+        if(intProductAllocationId) {
+            // if(currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"line"}) == "1") {
+            //     if(context.sublistId == "item") {
+            //         var flRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"rate"});
+            //         var flAmount = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"amount"});
+            //         var flOriginalRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"custcol_original_rate"});
+            //         var currentLine = currentRecord.selectLine({ sublistId: 'item', line: 2 });
+            //         currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "rate", value: flRate * -1, ignoreFieldChange: true});
+            //         currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "amount", value: flAmount * -1,ignoreFieldChange: true});
+            //         currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "custcol_original_rate", value: flOriginalRate * -1,ignoreFieldChange: true});
+            //         currentLine.commitLine({ sublistId: 'item' });
+            //     }
+            // }
+
+            // var flRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"rate"});
+            // var flAmount = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"amount"});
+            // var flOriginalRate = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"custcol_original_rate"});
+            // var flQuantity = currentRecord.getCurrentSublistValue({sublistId: "item", fieldId:"quantity"});
+            // var fieldItemLookUp = search.lookupFields({
+            //     type: search.Type.ITEM,
+            //     id: currentRecord.getCurrentSublistValue({sublistId:"item", fieldId:"item"}),
+            //     columns: ['custitem_zk_advance_item']
+            // });
+            //
+            // var foundCounter = 0;
+            // for(var intIndex=0; intIndex<currentRecord.getLineCount("item"); intIndex++) {
+            //     var item = currentRecord.getSublistValue({sublistId:"item", fieldId:"item", line: intIndex});
+            //     if(fieldItemLookUp.custitem_zk_advance_item[0].value == item) {
+            //         var currentLine = currentRecord.selectLine({ sublistId: 'item', line: intIndex });
+            //         currentLine.setCurrentSublistValue({sublistId: "item", fieldId: "quantity", value: flQuantity, ignoreFieldChange: true});
+            //         currentLine.commitLine({ sublistId: 'item' });
+            //         foundCounter+=1;
+            //     }
+            // }
+        }
+
+        return true;
+    }
 
     function saveRecord(context) {
         var currentRecord = context.currentRecord;
@@ -197,15 +224,16 @@ define(['N/search','N/record'], function(search, record) {
         var flTotalAllocated = 0;
         var flTotalDeductions = 0;
         for (var intIndex in objProductAllocations) {
-            if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
-                flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-            }
-            if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
-                flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-            }
+            // if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
+            flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
+            // }
+            // if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
+            //     flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
+            // }
         }
 
-        flTotalDeductions = parseFloat(flTotalAllocated + parseFloat(intDistributorPool));
+        // flTotalDeductions = parseFloat(flTotalAllocated + parseFloat(intDistributorPool));
+        flTotalDeductions = parseFloat(flTotalAllocated);
         return parseFloat(intAvailableManufactureQuantity - flTotalDeductions);
     }
 
@@ -269,7 +297,7 @@ define(['N/search','N/record'], function(search, record) {
         var filters = [
             ["custrecord_zk_pa_item","is",intItemId], "AND",
             // ["custrecord_zk_pa_location","is",intLocationId], "AND",
-            ["custrecord_zk_pa_status","noneof",3]
+            ["custrecord_zk_pa_status","anyof",2]
         ];
 
         var itemSearchObj = search.create({
@@ -289,10 +317,7 @@ define(['N/search','N/record'], function(search, record) {
                 search.createColumn({ name: "custrecord_zk_pa_item" }),
                 search.createColumn({ name: "lastmodified" }),
                 search.createColumn({ name: "custrecord_zk_pa_location" }),
-                search.createColumn({
-                    name: "custentity_xm_custinternaldistributor",
-                    join: "custrecord_zk_pa_distributor"
-                })
+                search.createColumn({ name: "custentity_xm_custinternaldistributor", join: "custrecord_zk_pa_distributor" })
             ]
         });
         var searchResultCount = itemSearchObj.runPaged().count;
@@ -317,10 +342,7 @@ define(['N/search','N/record'], function(search, record) {
                     'custrecord_zk_pa_item': result.getText('custrecord_zk_pa_item'),
                     'custrecord_zk_pa_location': result.getText('custrecord_zk_pa_location'),
                     'custrecord_zk_pa_locationid': result.getValue('custrecord_zk_pa_location'),
-                    'isInternalDistributor': result.getValue({
-                        name: "custentity_xm_custinternaldistributor",
-                        join: "custrecord_zk_pa_distributor"
-                    })
+                    'isInternalDistributor': result.getValue({ name: "custentity_xm_custinternaldistributor", join: "custrecord_zk_pa_distributor" })
                 };
                 return true;
             });

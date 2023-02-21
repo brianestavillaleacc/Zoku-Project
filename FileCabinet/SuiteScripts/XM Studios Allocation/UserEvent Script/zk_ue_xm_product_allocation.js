@@ -100,9 +100,9 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
                             type: serverWidget.FieldType.INLINEHTML,
                             label: 'Text'
                         });
+
                         stHtml += "<script>";
-                        stHtml += 'jQuery("#custpage_add_quantity").removeAttribute("onclick")';
-                        stHtml += 'jQuery(document).ready(function(){ jQuery("#custpage_add_quantity").click(function(e){ e.preventDefault();';
+                        stHtml += 'jQuery(document).ready(function(){ jQuery("#custpage_add_quantity").click(function(){';
                         stHtml += 'setTimeout(function() {';
                         stHtml += 'var fldRemainder=jQuery("#custpage_remainder");';
                         stHtml += 'fldRemainder.prop( "disabled", true );';
@@ -112,7 +112,7 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
                         stHtml += '});';
                         stHtml += 'jQuery("#btnSubmitOk").on("click",function(e){ e.stopPropagation(); try { ';
                         stHtml += 'var stAdditionalQuantity = jQuery("#custpage_inputdialog").val();';
-                        stHtml += 'if(stAdditionalQuantity) {';
+                        stHtml += 'if(stAdditionalQuantity <= ' + parseInt(intRemainderQuantity) + ') {';
                         stHtml += ' window.require(["N/url","N/https"],function (url,https) {';
                         stHtml += 'var inType = window.nlapiGetRecordType();';
                         stHtml += 'var inId = window.nlapiGetRecordId();';
@@ -122,11 +122,11 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
                         stHtml += ' params : {sltype : "process",rec_id : inId,rec_type : inType,additional : stAdditionalQuantity}});';
                         stHtml += 'var response =  https.get(output);';
                         stHtml += 'if(response.code === 200){window.location.reload();} });';
-                        stHtml += '}else{ alert("Value cannot be empty.") }';
+                        stHtml += '} else{ e.stopPropagation(); alert("Not Enough Available Quantity"); jQuery("#custpage_inputdialog").val("'+intRemainderQuantity+'"); }';
                         stHtml += '} catch (e) { console.log(e); } });';
                         stHtml += 'jQuery("#btnSubmitCancel").on("click",function(e){ window.location.reload(); });';
                         stHtml += "(function ($) {$(function ($, undefined) {$('.uir-message-buttons').last().hide();})})(jQuery); }, 1000);";
-                        stHtml += "setWindowChanged(window, false);;history.back(); return false; }); });";
+                        stHtml += "}); });";
                         stHtml += "</script>";
                         fieldHTML.defaultValue = stHtml;
 
@@ -379,15 +379,11 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
                 var intPricingGroup = (objProductAllocation.pricinggroup) ? objProductAllocation.pricinggroup : "";
                 var fetchItemRate = getItemPrice(objProductAllocation);
 
-                log.debug("fetchItemRate", fetchItemRate);
-
                 var flDepositAmount = (objProductAllocation.depositamount) ? objProductAllocation.depositamount : 0;
                 var flDiscount = parseFloat(getCustomerDiscountPercent(intCustomerCategory, intPricingGroup));
                 var flDiscountAmount = fetchItemRate * parseFloat(flDiscount / 100);
                 var flDiscountedRate = fetchItemRate - flDiscountAmount;
                 var flAdvanceDepositRate = (flDiscountedRate < flDepositAmount) ? flDiscountedRate : flDepositAmount;
-
-                log.debug("flAdvanceDepositRate", flAdvanceDepositRate);
 
                 var lookupFieldCustomer = search.lookupFields({
                     type: search.Type.CUSTOMER,
@@ -406,151 +402,158 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
                 //code: 0001
                 //createSalesOrder.setValue({fieldId: 'custbody_zk_so_product_allocation', value: intProductAllocationId});
 
-                var currentLine = createSalesOrder.insertLine({sublistId: 'item', line: 0});
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'item',
-                    line: 0,
-                    value: objProductAllocation.advanceitem
-                });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'department',
-                    line: 0,
-                    value: objProductAllocation.department
-                });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'class',
-                    line: 0,
-                    value: objProductAllocation.class
-                });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'location',
-                    line: 0,
-                    value: objProductAllocation.custrecord_zk_pa_location
-                });
-                // currentLine.setSublistValue({ sublistId: 'item', fieldId: 'price', line: 0, value: objProductAllocation.pricelevel });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'quantity',
-                    line: 0,
-                    value: parseFloat(objProductAllocation.custrecord_zk_pa_leftovers).toFixed(2)
-                });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'custcol_original_rate',
-                    line: 0,
-                    value: flAdvanceDepositRate
-                });
-                currentLine.setSublistValue({sublistId: 'item', fieldId: 'rate', line: 0, value: flAdvanceDepositRate});
+                if(objProductAllocation.custitem_preorderitem == "1") {
+                    var currentLine = createSalesOrder.insertLine({sublistId: 'item', line: 0});
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'item',
+                        line: 0,
+                        value: objProductAllocation.advanceitem
+                    });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'department',
+                        line: 0,
+                        value: objProductAllocation.department
+                    });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'class',
+                        line: 0,
+                        value: objProductAllocation.class
+                    });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'location',
+                        line: 0,
+                        value: objProductAllocation.custrecord_zk_pa_location
+                    });
+                    // currentLine.setSublistValue({ sublistId: 'item', fieldId: 'price', line: 0, value: objProductAllocation.pricelevel });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'quantity',
+                        line: 0,
+                        value: parseFloat(objProductAllocation.custrecord_zk_pa_leftovers).toFixed(2)
+                    });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'custcol_original_rate',
+                        line: 0,
+                        value: flAdvanceDepositRate
+                    });
+                    currentLine.setSublistValue({sublistId: 'item', fieldId: 'rate', line: 0, value: flAdvanceDepositRate});
+                }
 
-                var currentLine = createSalesOrder.insertLine({sublistId: 'item', line: 1});
+                var intLineNumber = (objProductAllocation.custitem_preorderitem == "1") ? 1 : 0;
+
+                var currentLine = createSalesOrder.insertLine({sublistId: 'item', line: intLineNumber });
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'item',
-                    line: 1,
+                    line: intLineNumber,
                     value: objProductAllocation.custrecord_zk_pa_item
                 });
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'department',
-                    line: 1,
+                    line: intLineNumber,
                     value: objProductAllocation.department
                 });
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'class',
-                    line: 1,
+                    line: intLineNumber,
                     value: objProductAllocation.class
                 });
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'location',
-                    line: 1,
+                    line: intLineNumber,
                     value: objProductAllocation.custrecord_zk_pa_location
                 });
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'price',
-                    line: 1,
+                    line: intLineNumber,
                     value: objProductAllocation.pricelevel
                 });
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'quantity',
-                    line: 1,
+                    line: intLineNumber,
                     value: parseFloat(objProductAllocation.custrecord_zk_pa_leftovers).toFixed(2)
                 });
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'custcol_original_rate',
-                    line: 1,
+                    line: intLineNumber,
                     value: fetchItemRate
                 });
-                currentLine.setSublistValue({sublistId: 'item', fieldId: 'rate', line: 1, value: flDiscountedRate});
+                currentLine.setSublistValue({sublistId: 'item', fieldId: 'rate', line: intLineNumber, value: flDiscountedRate});
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'custcol_discount_percent',
-                    line: 1,
+                    line: intLineNumber,
                     value: flDiscount
                 });
                 currentLine.setSublistValue({
                     sublistId: 'item',
                     fieldId: 'custcol_discount_amount',
-                    line: 1,
+                    line: intLineNumber,
                     value: flDiscountAmount * parseFloat(objProductAllocation.custrecord_zk_pa_leftovers)
                 });
 
                 //code 0001
-                currentLine.setSublistValue({sublistId: 'item', fieldId: 'custcol_zoku_product_allocation', line: 1, value: intProductAllocationId});
+                currentLine.setSublistValue({sublistId: 'item', fieldId: 'custcol_zoku_product_allocation', line: intLineNumber, value: intProductAllocationId});
 
-                var currentLine = createSalesOrder.insertLine({sublistId: 'item', line: 2});
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'item',
-                    line: 2,
-                    value: objProductAllocation.advanceitem
-                });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'department',
-                    line: 2,
-                    value: objProductAllocation.department
-                });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'class',
-                    line: 2,
-                    value: objProductAllocation.class
-                });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'location',
-                    line: 2,
-                    value: objProductAllocation.custrecord_zk_pa_location
-                });
-                // currentLine.setSublistValue({ sublistId: 'item', fieldId: 'price', line: 2, value: objProductAllocation.pricelevel });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'quantity',
-                    line: 2,
-                    value: parseFloat(parseFloat(objProductAllocation.custrecord_zk_pa_leftovers) * -1).toFixed(2)
-                });
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'custcol_original_rate',
-                    line: 2,
-                    value: flAdvanceDepositRate
-                });
+                if(objProductAllocation.custitem_preorderitem == "1") {
+                    var currentLine = createSalesOrder.insertLine({sublistId: 'item', line: 2});
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'item',
+                        line: 2,
+                        value: objProductAllocation.advanceitem
+                    });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'department',
+                        line: 2,
+                        value: objProductAllocation.department
+                    });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'class',
+                        line: 2,
+                        value: objProductAllocation.class
+                    });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'location',
+                        line: 2,
+                        value: objProductAllocation.custrecord_zk_pa_location
+                    });
+                    // currentLine.setSublistValue({ sublistId: 'item', fieldId: 'price', line: 2, value: objProductAllocation.pricelevel });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'quantity',
+                        line: 2,
+                        value: parseFloat(parseFloat(objProductAllocation.custrecord_zk_pa_leftovers) * -1).toFixed(2)
+                    });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'custcol_original_rate',
+                        line: 2,
+                        value: flAdvanceDepositRate
+                    });
 
-                currentLine.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'rate',
-                    line: 2,
-                    value: flAdvanceDepositRate
-                });
+                    currentLine.setSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'rate',
+                        line: 2,
+                        value: flAdvanceDepositRate
+                    });
+                }
+
 
                 var idSalesOrder = createSalesOrder.save();
 
@@ -559,7 +562,7 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
                 }
 
                 return idSalesOrder;
-            }catch(objError) {
+            } catch(objError) {
                 log.error('Error catched', objError)
             }
 
@@ -582,6 +585,7 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
                     search.createColumn({name: "department", join: "CUSTRECORD_ZK_PA_ITEM"}),
                     search.createColumn({name: "custitem_zk_advance_item", join: "CUSTRECORD_ZK_PA_ITEM"}),
                     search.createColumn({name: "custitem_zk_deposit_amount", join: "CUSTRECORD_ZK_PA_ITEM"}),
+                    search.createColumn({name: "custitem_preorderitem", join: "CUSTRECORD_ZK_PA_ITEM"}),
                     search.createColumn({name: "class", join: "CUSTRECORD_ZK_PA_ITEM"}),
                     search.createColumn({name: "pricinggroup", join: "CUSTRECORD_ZK_PA_ITEM"}),
                     search.createColumn({name: "currency", join: "CUSTRECORD_ZK_PA_DISTRIBUTOR"}),
@@ -603,17 +607,12 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
                         custrecord_zk_pa_item_text: result.getText({name: "custrecord_zk_pa_item"}),
                         custrecord_zk_pa_salesorder: result.getValue({name: "custrecord_zk_pa_salesorder"}),
                         custrecord_zk_pa_location: result.getValue({name: "custrecord_zk_pa_location"}),
-                        advanceitem: result.getValue({
-                            name: "custitem_zk_advance_item",
-                            join: "CUSTRECORD_ZK_PA_ITEM"
-                        }) || "846",
-                        depositamount: result.getValue({
-                            name: "custitem_zk_deposit_amount",
-                            join: "CUSTRECORD_ZK_PA_ITEM"
-                        }),
+                        advanceitem: result.getValue({ name: "custitem_zk_advance_item", join: "CUSTRECORD_ZK_PA_ITEM" }) || "846",
+                        depositamount: result.getValue({ name: "custitem_zk_deposit_amount", join: "CUSTRECORD_ZK_PA_ITEM" }),
                         department: result.getValue({name: "department", join: "CUSTRECORD_ZK_PA_ITEM"}),
                         class: result.getValue({name: "class", join: "CUSTRECORD_ZK_PA_ITEM"}),
                         pricinggroup: result.getValue({name: "pricinggroup", join: "CUSTRECORD_ZK_PA_ITEM"}),
+                        custitem_preorderitem: result.getValue({name: "custitem_preorderitem", join: "CUSTRECORD_ZK_PA_ITEM"}),
                         currency: result.getValue({name: "currency", join: "CUSTRECORD_ZK_PA_DISTRIBUTOR"}),
                         pricelevel: result.getValue({name: "pricelevel", join: "CUSTRECORD_ZK_PA_DISTRIBUTOR"}),
                         category: result.getValue({name: "category", join: "CUSTRECORD_ZK_PA_DISTRIBUTOR"}),
@@ -891,15 +890,15 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
             var flTotalDeductions = 0;
             var intDistributorPool= objItemDetails.custitem_zk_distributor_pool;
             for (var intIndex in objProductAllocations) {
-                if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
-                    flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-                }
-                if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
-                    flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-                }
+                // if (objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
+                    flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_allocated_quantity || 0);
+                // }
+                // if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
+                //     flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
+                // }
             }
             flTotalDeductions = parseFloat(flTotalAllocated + parseFloat(intDistributorPool));
-            return parseFloat(objItemDetails.custitem_zk_available_manufacture_qty - flTotalDeductions);
+            return parseFloat(objItemDetails.custitem_zk_estimated_manufacture_qty - flTotalDeductions);
         }
 
         function getProductAllocations(intItem) {
@@ -946,11 +945,12 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
             var lookupFieldItem = search.lookupFields({
                 type: search.Type.ITEM,
                 id: intItem,
-                columns: ['custitem_zk_available_manufacture_qty','custitem_zk_distributor_pool']
+                columns: ['custitem_zk_available_manufacture_qty', 'custitem_zk_estimated_manufacture_qty','custitem_zk_distributor_pool']
             });
             return {
                 'custitem_zk_distributor_pool': lookupFieldItem['custitem_zk_distributor_pool'] || 0,
-                'custitem_zk_available_manufacture_qty':lookupFieldItem['custitem_zk_available_manufacture_qty'] || 0
+                'custitem_zk_available_manufacture_qty':lookupFieldItem['custitem_zk_available_manufacture_qty'] || 0,
+                'custitem_zk_estimated_manufacture_qty':lookupFieldItem['custitem_zk_estimated_manufacture_qty'] || 0
             };
         }
 
@@ -996,5 +996,4 @@ define(['N/ui/serverWidget', '../Library/zk_xm_library', 'N/search', 'N/record',
         }
 
     }
-)
-;
+);

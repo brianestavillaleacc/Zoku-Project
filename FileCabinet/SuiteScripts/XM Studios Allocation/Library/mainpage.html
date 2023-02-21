@@ -13,7 +13,7 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <!--  <link rel="stylesheet" href="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2675&c=6961610_SB1&h=oXit3Mr6Msc5c2WusqjCSkiwCQpLvSNgV1LSyCyvIw05LfgG&_xt=.css">-->
+    <link rel="stylesheet" href="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2675&c=6961610_SB1&h=oXit3Mr6Msc5c2WusqjCSkiwCQpLvSNgV1LSyCyvIw05LfgG&_xt=.css">
   <link rel="stylesheet" href="https://6961610.app.netsuite.com/core/media/media.nl?id=2792&c=6961610&h=r95QB_vxXw_EAkeICnNz58L4nd9FRff0MYQIAYf5ZWYJWMr-&_xt=.css">
 
   <!-- select2 css -->
@@ -633,27 +633,44 @@
     return true;
   }
   function submitDistributorPool() {
+    var intLegacyDistributorPool = objDefaultValues.stDistributorPool;
     var intDistributorPool = parseFloat(document.getElementById("txtEditDistributorPool").value || 0);
     var intAvailableQty = parseFloat(document.getElementById("txtAvailableQuantity").value || 0);
     var intRemainder = parseFloat(document.getElementById("txtViewRemainder").value || 0);
     var flTotalAllocated=0;
-    for(var intIndex in objProductAllocations) {
-      if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
-        flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-      }
-      if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
-        flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
-      }
+    // for(var intIndex in objProductAllocations) {
+    //   if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Pending") {
+    //     flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
+    //   }
+    //   if(objProductAllocations[intIndex].custrecord_zk_pa_status == "Acknowledged" && objProductAllocations[intIndex].isInternalDistributor) {
+    //     flTotalAllocated += parseFloat(objProductAllocations[intIndex].custrecord_zk_pa_leftovers || 0);
+    //   }
+    //
+    // }
 
-    }
+    // var intTotalAllocatedQty = intDistributorPool+flTotalAllocated;
+    // document.getElementById('custpage_post').value='submitDistributorPool';
+    //
+    // if(intTotalAllocatedQty > intAvailableQty) {
+    //   alert("Distributor Pool is more than the remaining quantity");
+    //   return false;
+    // }
 
-    var intTotalAllocatedQty = intDistributorPool+flTotalAllocated;
-    document.getElementById('custpage_post').value='submitDistributorPool';
-
-    if(intTotalAllocatedQty > intAvailableQty) {
-      alert("Distributor Pool is more than the remaining quantity");
+    if(intDistributorPool<0) {
+      alert("Distributor Pool should not be negative.");
       return false;
     }
+
+    if(intDistributorPool > intLegacyDistributorPool) {
+      var diffDistributorPool = intDistributorPool - intLegacyDistributorPool;
+
+      if(diffDistributorPool > intRemainder) {
+          alert("Distributor Pool is more than the remaining quantity");
+          return false;
+      }
+    }
+
+    document.getElementById('custpage_post').value='submitDistributorPool';
 
     return true;
   }
@@ -682,20 +699,20 @@
 </script>
 
 <!-- jQuery -->
-<!--<script src="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2794&c=6961610_SB1&h=XNnobuc0cTLNJ5pc5a97LbYWRtILGQoMMwpeZ4jQzIOqUcL_&_xt=.js"></script>-->
-<script src="https://6961610.app.netsuite.com/core/media/media.nl?id=2794&c=6961610&h=XNnobuc0cTLNJ5pc5a97LbYWRtILGQoMMwpeZ4jQzIOqUcL_&_xt=.js"></script>
+<script src="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2794&c=6961610_SB1&h=XNnobuc0cTLNJ5pc5a97LbYWRtILGQoMMwpeZ4jQzIOqUcL_&_xt=.js"></script>
+<!--<script src="https://6961610.app.netsuite.com/core/media/media.nl?id=2794&c=6961610&h=XNnobuc0cTLNJ5pc5a97LbYWRtILGQoMMwpeZ4jQzIOqUcL_&_xt=.js"></script>-->
 
 <!-- Bootstrap 4 -->
-<!--<script src="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2798&c=6961610_SB1&h=MYbORMgB0aichZFS198mEkaw2IlHeysQhSdrQfEaVkjuziLH&_xt=.js"></script>-->
-<script src="https://6961610.app.netsuite.com/core/media/media.nl?id=2798&c=6961610&h=MYbORMgB0aichZFS198mEkaw2IlHeysQhSdrQfEaVkjuziLH&_xt=.js"></script>
+<script src="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2798&c=6961610_SB1&h=MYbORMgB0aichZFS198mEkaw2IlHeysQhSdrQfEaVkjuziLH&_xt=.js"></script>
+<!--<script src="https://6961610.app.netsuite.com/core/media/media.nl?id=2798&c=6961610&h=MYbORMgB0aichZFS198mEkaw2IlHeysQhSdrQfEaVkjuziLH&_xt=.js"></script>-->
 
 <!-- AdminLTE App -->
-<!--<script src="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2799&c=6961610_SB1&h=Gnk94nBe4pV-abdC4Xp3VUN5ZpAMwj7-T_6AeWOSOUu3NqMc&_xt=.js"></script>-->
-<script src="https://6961610.app.netsuite.com/core/media/media.nl?id=2799&c=6961610&h=Gnk94nBe4pV-abdC4Xp3VUN5ZpAMwj7-T_6AeWOSOUu3NqMc&_xt=.js"></script>
+<script src="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2799&c=6961610_SB1&h=Gnk94nBe4pV-abdC4Xp3VUN5ZpAMwj7-T_6AeWOSOUu3NqMc&_xt=.js"></script>
+<!--<script src="https://6961610.app.netsuite.com/core/media/media.nl?id=2799&c=6961610&h=Gnk94nBe4pV-abdC4Xp3VUN5ZpAMwj7-T_6AeWOSOUu3NqMc&_xt=.js"></script>-->
 
 <!-- Data Tables -->
-<!--<script src="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2795&c=6961610_SB1&h=kYoge6deoYkbLGmmj0k4AvJzR4uLW8C7QUuzSLxHINJDpmpw&_xt=.js"></script>-->
-<script src="https://6961610.app.netsuite.com/core/media/media.nl?id=2795&c=6961610&h=kYoge6deoYkbLGmmj0k4AvJzR4uLW8C7QUuzSLxHINJDpmpw&_xt=.js"></script>
+<script src="https://6961610-sb1.app.netsuite.com/core/media/media.nl?id=2795&c=6961610_SB1&h=kYoge6deoYkbLGmmj0k4AvJzR4uLW8C7QUuzSLxHINJDpmpw&_xt=.js"></script>
+<!--<script src="https://6961610.app.netsuite.com/core/media/media.nl?id=2795&c=6961610&h=kYoge6deoYkbLGmmj0k4AvJzR4uLW8C7QUuzSLxHINJDpmpw&_xt=.js"></script>-->
 
 <!-- select2 js -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
